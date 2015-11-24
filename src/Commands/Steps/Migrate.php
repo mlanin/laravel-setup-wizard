@@ -41,6 +41,6 @@ class Migrate extends AbstractStep
      */
     public function finish($results)
     {
-        return ! (bool) \Artisan::call('migrate', ['--force', '--no-interaction']);
+        return ! (bool) \Artisan::call('migrate:refresh', ['--force' => true, '--no-interaction' => true]);
     }
 }

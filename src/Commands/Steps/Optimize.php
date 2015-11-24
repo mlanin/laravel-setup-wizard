@@ -41,6 +41,6 @@ class Optimize extends AbstractStep
      */
     public function finish($results)
     {
-        return ! (bool) \Artisan::call('optimize', ['--force', '--no-interaction']);
+        return ! (bool) \Artisan::call('optimize', ['--force' => true, '--no-interaction' => true]);
     }
 }

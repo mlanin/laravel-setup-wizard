@@ -54,7 +54,11 @@ class Setup extends Command
         $step = $this->argument('step');
         $pretend = (bool) $this->option('pretend');
 
-        return empty($step) ? $this->runAllSteps($pretend) : $this->runStep($step, $pretend);
+        $return = empty($step) ? $this->runAllSteps($pretend) : $this->runStep($step, $pretend);
+
+        $this->info('Setup finished.');
+
+        return $return;
     }
 
     /**

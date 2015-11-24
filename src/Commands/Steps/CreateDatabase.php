@@ -61,7 +61,7 @@ class CreateDatabase extends AbstractStep
         $return['host'] = env('DB_HOST');
         $return['database'] = env('DB_DATABASE');
 
-        $return['commands'][] = "CREATE DATABASE {$return['database']};";
+        $return['commands'][] = "CREATE DATABASE IF NOT EXISTS {$return['database']};";
     }
 
     /**
@@ -109,7 +109,7 @@ class CreateDatabase extends AbstractStep
     protected function prepareCommand($results, $full = false)
     {
         return sprintf(
-            "mysql -u \"%s\" -p \"%s\" -h \"%s\" -e \"%s\"",
+            "mysql -u\"%s\" -p\"%s\" -h\"%s\" -e\"%s\"",
             $results['username'],
             $full ? $results['password'] : '******',
             $results['host'],

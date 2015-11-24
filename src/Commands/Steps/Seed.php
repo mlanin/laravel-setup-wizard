@@ -41,6 +41,6 @@ class Seed extends AbstractStep
      */
     public function finish($results)
     {
-        return ! (bool) \Artisan::call('db:seed', ['--class' => $results, '--force', '--no-interaction']);
+        return ! (bool) \Artisan::call('db:seed', ['--class' => $results, '--force' => true, '--no-interaction' => true]);
     }
 }
