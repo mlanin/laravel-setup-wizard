@@ -7,10 +7,19 @@ use Lanin\Laravel\SetupWizard\Commands\Steps\NewUser;
 use Lanin\Laravel\SetupWizard\Commands\Steps\Optimize;
 use Lanin\Laravel\SetupWizard\Commands\Steps\Seed;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class Setup extends Command
 {
     const VERSION = '0.1';
+
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'app:setup';
 
     /**
      * The name and signature of the console command.
@@ -19,7 +28,7 @@ class Setup extends Command
      */
     protected $signature = 'app:setup
                             {step? : Step to run}
-                            {--pretend}';
+                            {--P|pretend : Pretend to execute}';
 
     /**
      * The console command description.
@@ -99,5 +108,29 @@ class Setup extends Command
         }
 
         return false;
+    }
+
+    /**
+     * Get the console command arguments.
+     *
+     * @return array
+     */
+    protected function getArguments()
+    {
+        return [
+            ['step', InputArgument::OPTIONAL, 'Step to run'],
+        ];
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['pretend', "P", InputOption::VALUE_NONE, 'Pretend to execute'],
+        ];
     }
 }
