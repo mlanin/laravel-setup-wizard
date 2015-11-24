@@ -7,12 +7,9 @@ use Lanin\Laravel\SetupWizard\Commands\Steps\NewUser;
 use Lanin\Laravel\SetupWizard\Commands\Steps\Optimize;
 use Lanin\Laravel\SetupWizard\Commands\Steps\Seed;
 use Illuminate\Console\Command;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class Setup extends Command
 {
-    use DispatchesJobs;
-
     const VERSION = '0.1';
 
     /**
