@@ -102,7 +102,7 @@ class DotEnv extends AbstractStep
 
         $file = static::$exampleEnv;
 
-        if (file_exists(base_path('.env')) && $this->command->confirm('We found existing .env file. Use it for defaults?', true))
+        if (file_exists(base_path('.env')) && $this->command->confirm('We found existing .env file. Use it for default?', true))
         {
             $file = '.env';
         }
