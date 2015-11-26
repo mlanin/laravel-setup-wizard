@@ -36,6 +36,18 @@ This command gives your customers the easy wizard for initial setup of the your 
 1. Create first user
 1. Optimize code
 
+Also they can run single step manually by adding it's alias as an argument:
+
+```bash
+php artisan app:setup create_user
+```
+
+For additional help use:
+
+```bash
+php artisan help app:setup
+```
+
 ## Configuration
 
 All defaults are stored in `setup.php` config file. You can publish it in your app's `config` folder using artisan command:
@@ -46,7 +58,7 @@ $ php artisan vendor:publish
 
 ## Extending
 
-You can create your own installations steps by adding them to your setup.php config.
+You can create your own installations steps specifying them in your `setup.php` config.
 
 First you should create new step class that will extend `Lanin\Laravel\SetupWizard\Commands\Steps\AbstractStep`.
 It has three abstract methods that you have to create:
@@ -100,7 +112,7 @@ abstract public function finish($results);
 The last but the most important step is right for the step execution. 
 Should return boolean true if everything was ok and false if there was an error.
 
-After everything is done, add your step to the `setup.steps` array where keys are step aliases and value is a fully resolved class name.
+After everything is done, add your step to the `setup.steps` array in your `setup.php` file where key should be a step's alias and value is a fully resolved class name.
 
 ## Contributing
 
