@@ -3,6 +3,8 @@
 
 > :exclamation: Project is under development
 
+![help](http://lanin.me/images/setup.png)
+
 ## Installation
 
 [PHP](https://php.net) 5.5.9+ or [HHVM](http://hhvm.com) 3.3+, [Composer](https://getcomposer.org) and [Laravel](http://laravel.com) 5.1+ are required.
