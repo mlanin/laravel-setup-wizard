@@ -21,7 +21,7 @@ class Setup extends Command
      *
      * @var string
      */
-    protected $description = 'Setup the project';
+    protected $description = 'Setup the project.';
 
     /**
      * Installation steps.
@@ -29,6 +29,23 @@ class Setup extends Command
      * @var array
      */
     protected $steps = [];
+
+    /**
+     * @inheritDoc
+     */
+    public function getHelp()
+    {
+        $steps = config('setup.steps');
+
+        $help = $this->description . ' Available steps:' . PHP_EOL;
+
+        foreach ($steps as $alias => $class)
+        {
+            $help .= '  - <comment>' . $alias . '</comment>'. PHP_EOL;
+        }
+
+        return $help;
+    }
 
     /**
      * Execute the console command.
