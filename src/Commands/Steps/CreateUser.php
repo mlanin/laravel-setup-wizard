@@ -1,15 +1,7 @@
 <?php namespace Lanin\Laravel\SetupWizard\Commands\Steps;
 
-class NewUser extends AbstractStep
+class CreateUser extends AbstractStep
 {
-    public static $table    = '';
-    public static $password = 'password';
-    public static $fields   = [
-        'name' => 'Name',
-        'email' => 'Email',
-        'password' => 'Password',
-    ];
-
     /**
      * Return command prompt text.
      *
@@ -28,11 +20,11 @@ class NewUser extends AbstractStep
     protected function prepare()
     {
         $result = [];
-        foreach (static::$fields as $column => $title)
+        foreach (config('setup.create_user.fields') as $column => $title)
         {
             $result[$column] = $this->command->ask($title);
 
-            if ($column == static::$password)
+            if ($column == config('setup.create_user.password_field'))
             {
                 $result[$column] = bcrypt($result[$column]);
             }
@@ -49,7 +41,10 @@ class NewUser extends AbstractStep
      */
     public function preview($results)
     {
-        return;
+        list($keys, $values) = array_divide($results);
+
+        $this->command->info('I will insert this values into <comment>' . $this->getTable() . '</comment> table');
+        $this->command->table(['column', 'value'], collect($keys)->zip(collect($values))->toArray());
     }
 
     /**
@@ -60,7 +55,19 @@ class NewUser extends AbstractStep
      */
     public function finish($results)
     {
-        $table = static::$table;
+        $table = $this->getTable();
+
+        return \DB::table($table)->insert($results);
+    }
+
+    /**
+     * Get users table name.
+     *
+     * @return mixed
+     */
+    protected function getTable()
+    {
+        $table = config('setup.create_user.table');
 
         if (empty($table))
         {
@@ -76,8 +83,10 @@ class NewUser extends AbstractStep
                     $table = config('auth.table');
                     break;
             }
+
+            return $table;
         }
 
-        return \DB::table($table)->insert($results);
+        return $table;
     }
 }

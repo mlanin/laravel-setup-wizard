@@ -1,12 +1,7 @@
 <?php namespace Lanin\Laravel\SetupWizard\Commands;
 
-use Lanin\Laravel\SetupWizard\Commands\Steps\CreateDatabase;
-use Lanin\Laravel\SetupWizard\Commands\Steps\DotEnv;
-use Lanin\Laravel\SetupWizard\Commands\Steps\Migrate;
-use Lanin\Laravel\SetupWizard\Commands\Steps\NewUser;
-use Lanin\Laravel\SetupWizard\Commands\Steps\Optimize;
-use Lanin\Laravel\SetupWizard\Commands\Steps\Seed;
 use Illuminate\Console\Command;
+use Lanin\Laravel\SetupWizard\Commands\Steps\AbstractStep;
 
 class Setup extends Command
 {
@@ -33,14 +28,7 @@ class Setup extends Command
      *
      * @var array
      */
-    public static $steps = [
-        '.env'              => DotEnv::class,
-        'create_database'   => CreateDatabase::class,
-        'migrate'           => Migrate::class,
-        'seed'              => Seed::class,
-        'create_user'       => NewUser::class,
-        'optimize'          => Optimize::class,
-    ];
+    protected $steps = [];
 
     /**
      * Execute the console command.
@@ -49,10 +37,12 @@ class Setup extends Command
      */
     public function handle()
     {
-        $this->info('Laravel Setup Wizard v' . self::VERSION);
+        $this->info(sprintf('%s (v%s)', config('setup.title'), self::VERSION));
 
         $step = $this->argument('step');
         $pretend = (bool) $this->option('pretend');
+
+        $this->steps = config('setup.steps');
 
         $return = empty($step) ? $this->runAllSteps($pretend) : $this->runStep($step, $pretend);
 
@@ -70,7 +60,7 @@ class Setup extends Command
     protected function runAllSteps($pretend = false)
     {
         $return = 0;
-        foreach (array_keys(static::$steps) as $step)
+        foreach (array_keys($this->steps) as $step)
         {
             $return += (int) $this->runStep($step, $pretend);
         }
@@ -87,9 +77,9 @@ class Setup extends Command
      */
     protected function runStep($step, $pretend = false)
     {
-        if (isset(static::$steps[$step]) && class_exists(static::$steps[$step]))
+        if (isset($this->steps[$step]) && class_exists($this->steps[$step]))
         {
-            $class = static::$steps[$step];
+            $class = $this->steps[$step];
             $step  = new $class($this);
 
             if ($this->confirm($step->prompt(), true))

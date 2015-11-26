@@ -19,7 +19,7 @@ class Seed extends AbstractStep
      */
     protected function prepare()
     {
-        return $this->command->ask('Seed to run', 'DatabaseSeeder');
+        return $this->command->ask('Seed to run', config('setup.seed.class'));
     }
 
     /**

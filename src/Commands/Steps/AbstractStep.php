@@ -27,13 +27,6 @@ abstract class AbstractStep
     }
 
     /**
-     * Return command prompt text.
-     *
-     * @return string
-     */
-    abstract public function prompt();
-
-    /**
      * Run step.
      *
      * @param  bool $pretend
@@ -48,10 +41,15 @@ abstract class AbstractStep
         if ($this->command->confirm('Everything is right?'))
         {
             $return = ( ! $pretend) ? $this->finish($results) : true;
+
+            if ($return == false)
+            {
+                $return = $this->repeat();
+            }
         }
         else
         {
-            $return = ($this->repeats <= self::REPEATS) ?  $this->repeat() : false;
+            $return = $this->repeat();
         }
 
         return $return;
@@ -64,6 +62,11 @@ abstract class AbstractStep
      */
     public function repeat()
     {
+        if ($this->repeats > self::REPEATS)
+        {
+            return false;
+        }
+
         if ($this->command->confirm('Do you want to repeat step?'))
         {
             $this->repeats++;
@@ -73,6 +76,13 @@ abstract class AbstractStep
 
         return false;
     }
+
+    /**
+     * Return command prompt text.
+     *
+     * @return string
+     */
+    abstract public function prompt();
 
     /**
      * Prepare step data.

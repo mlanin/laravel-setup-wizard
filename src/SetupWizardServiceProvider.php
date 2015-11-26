@@ -10,7 +10,9 @@ class SetupWizardServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-
+		$this->publishes([
+			__DIR__.'/../config/setup.php' => config_path('setup.php'),
+		]);
 	}
 
 	/**
@@ -20,11 +22,29 @@ class SetupWizardServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->singleton('setup-wizard.setup', function($app)
-		{
+		$this->registerCommand();
+		$this->registerConfig();
+	}
+
+	/**
+	 * Register setup command.
+	 */
+	protected function registerCommand()
+	{
+		$this->app->singleton('setup-wizard.setup', function ($app) {
 			return $app[Setup::class];
 		});
 
-        $this->commands('setup-wizard.setup');
+		$this->commands('setup-wizard.setup');
+	}
+
+	/**
+	 * Register setup config.
+	 */
+	protected function registerConfig()
+	{
+		$this->mergeConfigFrom(
+				__DIR__ . '/../config/setup.php', 'setup'
+		);
 	}
 }

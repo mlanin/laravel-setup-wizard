@@ -5,7 +5,7 @@
 
 ## Installation
 
-[PHP](https://php.net) 5.4+ or [HHVM](http://hhvm.com) 3.3+, [Composer](https://getcomposer.org) and [Laravel](http://laravel.com) 5.1+ are required.
+[PHP](https://php.net) 5.5.9+ or [HHVM](http://hhvm.com) 3.3+, [Composer](https://getcomposer.org) and [Laravel](http://laravel.com) 5.1+ are required.
 
 To get the latest version of Laravel-Setup-Wizard, simply install it via composer.
 
@@ -38,7 +38,69 @@ This command gives your customers the easy wizard for initial setup of the your 
 
 ## Configuration
 
+All defaults are stored in setup.php config file. You can publish it in your app's configs folder using artisan command:
 
+```bash
+$ php artisan vendor:publish
+```
+
+## Extending
+
+You can create your own installations steps by adding them to your setup.php config.
+
+First you should create new step class that will extend `Lanin\Laravel\SetupWizard\Commands\Steps\AbstractStep`.
+It has three abstract methods that you have to create:
+
+```php
+/**
+ * Return command prompt text.
+ *
+ * @return string
+ */
+abstract public function prompt();
+```
+
+This method has to return prompt text that will be shown to the user before step is executed.
+
+```php
+/**
+ * Prepare step data.
+ *
+ * @return mixed
+ */
+abstract protected function prepare();
+```
+
+This method can be used to collect all needed data for the step to execute.
+For example ask user for extra data or credentials, etc. All this data should be returned for further execution.
+
+```php
+/**
+ * Preview results.
+ *
+ * @param  mixed $results
+ * @return void
+ */
+abstract public function preview($results);
+```
+
+Preview method used to show user info about what particular commands will be executed. 
+It is used to make user sure that everything will be ok.
+
+```php
+/**
+ * Finish step.
+ *
+ * @param  mixed $results
+ * @return bool
+ */
+abstract public function finish($results);
+```
+
+The last but the most important step is right for the step execution. 
+Should return boolean true if everything was ok and false if there was an error.
+
+After everything is done, add your step to the `setup.steps` array where keys are step aliases and value is a fully resolved class name.
 
 ## Contributing
 

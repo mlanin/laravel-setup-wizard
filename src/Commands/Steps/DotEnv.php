@@ -9,79 +9,6 @@ class DotEnv extends AbstractStep
     const INPUT  = 'input';
 
     /**
-     * @var string
-     */
-    public static $exampleEnv = '.env.example';
-
-    /**
-     * @var array
-     */
-    public static $defaults = [
-        'APP_ENV' => [
-            'type' => self::SELECT,
-            'options' => ['local', 'production'],
-        ],
-        'APP_DEBUG' => [
-            'type' => self::SELECT,
-            'options' => ['true', 'false'],
-        ],
-        'APP_KEY' => [
-            'type' => self::RANDOM,
-        ],
-
-        'DB_CONNECTION' => [
-            'type' => self::SELECT,
-            'options' => ['mysql', 'sqlite', 'pgsql', 'sqlsrv'],
-        ],
-        'DB_HOST' => [
-            'type' => self::INPUT,
-        ],
-        'DB_DATABASE' => [
-            'type' => self::INPUT,
-        ],
-        'DB_USERNAME' => [
-            'type' => self::INPUT,
-        ],
-        'DB_PASSWORD' => [
-            'type' => self::INPUT,
-        ],
-
-        'CACHE_DRIVER' => [
-            'type' => self::SELECT,
-            'options' => ['apc', 'array', 'database', 'file', 'memcached', 'redis'],
-        ],
-        'SESSION_DRIVER' => [
-            'type' => self::SELECT,
-            'options' => ['file', 'cookie', 'database', 'apc', 'memcached', 'redis', 'array'],
-        ],
-        'QUEUE_DRIVER' => [
-            'type' => self::SELECT,
-            'options' => ['null', 'sync', 'database', 'beanstalkd', 'sqs', 'iron', 'redis'],
-        ],
-
-        'MAIL_DRIVER' => [
-            'type' => self::SELECT,
-            'options' => ['smtp', 'mail', 'sendmail', 'mailgun', 'mandrill', 'ses', 'log'],
-        ],
-        'MAIL_HOST' => [
-            'type' => self::INPUT,
-        ],
-        'MAIL_PORT' => [
-            'type' => self::INPUT,
-        ],
-        'MAIL_USERNAME' => [
-            'type' => self::INPUT,
-        ],
-        'MAIL_PASSWORD' => [
-            'type' => self::INPUT,
-        ],
-        'MAIL_ENCRYPTION' => [
-            'type' => self::INPUT,
-        ],
-    ];
-
-
-    /**
      * Return short command description.
      *
      * @return string
@@ -100,7 +27,7 @@ class DotEnv extends AbstractStep
     {
         $result = [];
 
-        $file = static::$exampleEnv;
+        $file = config('setup.dot_env.default_file');
 
         if (file_exists(base_path('.env')) && $this->command->confirm('We found existing .env file. Use it for default?', true))
         {
@@ -111,16 +38,9 @@ class DotEnv extends AbstractStep
 
         foreach (\Lanin\Laravel\SetupWizard\Support\DotEnv::$variables as $name => $default)
         {
-            if (isset(static::$defaults[$name]))
-            {
-                $options = static::$defaults[$name];
+            $options = config('setup.dot_env.variables.' . $name, ['type' => self::INPUT]);
 
-                $result[$name] = $this->{'run' . $options['type']}($name, $options, $default);
-            }
-            else
-            {
-                $result[$name] = $this->runInput($name, [], $default);
-            }
+            $result[$name] = $this->{'run' . $options['type']}($name, $options, $default);
         }
 
         return $result;
