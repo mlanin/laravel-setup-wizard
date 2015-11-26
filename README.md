@@ -29,8 +29,8 @@ php artisan app:setup
 
 This command gives your customers the easy wizard for initial setup of the your project. By default it has 6 steps:
 
-1. Set new .env file from your .env.example
-1. Create new DB & user from .env
+1. Set new `.env` file from your `.env.example`
+1. Create new DB & user from `.env`
 1. Run migrations
 1. Run seeds
 1. Create first user
@@ -38,7 +38,7 @@ This command gives your customers the easy wizard for initial setup of the your 
 
 ## Configuration
 
-All defaults are stored in setup.php config file. You can publish it in your app's configs folder using artisan command:
+All defaults are stored in `setup.php` config file. You can publish it in your app's configs folder using artisan command:
 
 ```bash
 $ php artisan vendor:publish
