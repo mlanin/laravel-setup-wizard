@@ -8,7 +8,10 @@ use Lanin\Laravel\SetupWizard\Commands\Steps\CreateUser;
 use Lanin\Laravel\SetupWizard\Commands\Steps\Optimize;
 
 return [
+    // Setup title. Shown in the beginning of setup.
     'title' => 'Laravel Setup Wizard',
+
+    // Steps to run. Will be run in the order as they defined in this array.
     'steps' => [
         'dot_env'           => DotEnv::class,
         'create_database'   => CreateDatabase::class,
@@ -17,20 +20,36 @@ return [
         'create_user'       => CreateUser::class,
         'optimize'          => Optimize::class,
     ],
+
+    // Options for create_user step.
     'create_user' => [
+        // Table to insert.
         'table'    => '',
+        // Password field name.
         'password_field' => 'password',
+        // Columns and their titles to use.
         'fields'   => [
             'name'     => 'Name',
             'email'    => 'Email',
             'password' => 'Password',
         ]
     ],
+
+    // Options for seed step.
     'seed' => [
+        // Default class to use.
         'class' => 'DatabaseSeeder',
     ],
+
+    // Options for dot_env step.
     'dot_env' => [
+        // File for defaults.
         'default_file' => '.env.example',
+        // .env variables with their options.
+        // Variable input types:
+        //  - DotEnv::INPUT ask to input a value.
+        //  - DotEnv::SELECT ask to choose a value. Should contain array of options.
+        //  - DotEnv::RANDOM ask if user wants to generate a random value.
         'variables' => [
             'APP_ENV' => [
                 'type' => DotEnv::SELECT,

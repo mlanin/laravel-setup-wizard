@@ -38,7 +38,7 @@ This command gives your customers the easy wizard for initial setup of the your 
 
 ## Configuration
 
-All defaults are stored in `setup.php` config file. You can publish it in your app's configs folder using artisan command:
+All defaults are stored in `setup.php` config file. You can publish it in your app's `config` folder using artisan command:
 
 ```bash
 $ php artisan vendor:publish

@@ -39,10 +39,10 @@ class Setup extends Command
     {
         $this->info(sprintf('%s (v%s)', config('setup.title'), self::VERSION));
 
+        $this->steps = config('setup.steps');
+
         $step = $this->argument('step');
         $pretend = (bool) $this->option('pretend');
-
-        $this->steps = config('setup.steps');
 
         $return = empty($step) ? $this->runAllSteps($pretend) : $this->runStep($step, $pretend);
 
