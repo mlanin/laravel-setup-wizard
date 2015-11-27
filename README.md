@@ -1,7 +1,7 @@
 # Laravel-Setup-Wizard
 > Provide your Laravel project with handy setup wizard.
 
-> :exclamation: Project is under development
+Guide your customer through all installations steps he need to perform for a proper setup of your project.
 
 ![help](http://lanin.me/images/setup.png)
 
