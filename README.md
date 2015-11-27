@@ -12,7 +12,7 @@ Guide your customer through all installations steps he need to perform for a pro
 To get the latest version of Laravel-Setup-Wizard, simply install it via composer.
 
 ```bash
-$ composer require lanin/laravel-setup-wizard
+$ composer require "lanin/laravel-setup-wizard:0.1.*"
 ```
 
 Once Laravel-Setup-Wizard is installed, you need to register the service provider. Open up `config/app.php` and add the following to the providers key.
