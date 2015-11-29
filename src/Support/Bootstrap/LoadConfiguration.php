@@ -1,4 +1,4 @@
-<?php namespace Lanin\Laravel\SetupWizard\Support;
+<?php namespace Lanin\Laravel\SetupWizard\Support\Bootstrap;
 
 use Illuminate\Contracts\Foundation\Application;
 

@@ -18,8 +18,8 @@ class DotEnv extends AbstractStep
      * @var array
      */
     protected $boostrappers = [
-        'Illuminate\Foundation\Bootstrap\DetectEnvironment',
-        'Lanin\Laravel\SetupWizard\Support\LoadConfiguration',
+        'Lanin\Laravel\SetupWizard\Support\Bootstrap\DetectEnvironment',
+        'Lanin\Laravel\SetupWizard\Support\Bootstrap\LoadConfiguration',
         'Illuminate\Foundation\Bootstrap\ConfigureLogging',
     ];
 
@@ -53,7 +53,7 @@ class DotEnv extends AbstractStep
 
         foreach (\Lanin\Laravel\SetupWizard\Support\DotEnv::$variables as $name => $default)
         {
-            $options = config('setup.dot_env.variables.' . $name, ['type' => self::INPUT]);
+            $options = config('setup.dot_env.variables.' . $name, ['type' => self::INPUT, 'prompt' => 'Provide value for environment variable']);
 
             $result[$name] = $this->{'run' . $options['type']}($name, $options, $default);
         }
@@ -137,8 +137,10 @@ class DotEnv extends AbstractStep
     }
 
     /**
-     * @param string $name
-     * @param string $prompt
+     * Generate prompt text.
+     *
+     * @param  string $name
+     * @param  string $prompt
      * @return string
      */
     protected function generatePrompt($name, $prompt)
@@ -154,15 +156,17 @@ class DotEnv extends AbstractStep
      */
     public function finish($results)
     {
-        $return = $this->saveFile($results);
-
-        if ($return)
+        if ($return = $this->saveFile($results))
         {
             $this->command->info('New .env file was saved');
 
             /*
-             * "Rebootstrap" Application to load new env variables to the config using native Application::bootstrapWith([]) method.
+             * "Rebootstrap" Application to load new env variables to the config
+             * using native Application::bootstrapWith([]) method with custom bootstrappers.
              *
+             * First of all we have to make Dotenv mutable in order to overwrite environment variables.
+             *
+             * Next we have to update config.
              * In current Laravel implementation there is no method to reload Application config fully or Application itself.
              * Problem is that after reloading Config Repository it looses data from packages' config files
              * that are not currently published in /config directory. They are loaded only once after Application is bootstrapped.

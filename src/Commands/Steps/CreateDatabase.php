@@ -4,8 +4,8 @@ use Symfony\Component\Process\Process;
 
 class CreateDatabase extends AbstractStep
 {
-    const USE_ENV_USER = 'env';
-    const SET_NEW_USER = 'new';
+    const USE_ENV_USER   = 'env';
+    const USE_OTHER_USER = 'other';
 
     /**
      * Return command prompt text.
@@ -25,8 +25,8 @@ class CreateDatabase extends AbstractStep
     protected function prepare()
     {
         $source = $this->command->choice(
-            'Do you want to use user from .env or provide new one?',
-            [self::USE_ENV_USER, self::SET_NEW_USER],
+            'Do you want to use user from .env or provide another one?',
+            [self::USE_ENV_USER, self::USE_OTHER_USER],
             0
         );
 
@@ -39,9 +39,8 @@ class CreateDatabase extends AbstractStep
 
         switch ($source)
         {
-            case self::SET_NEW_USER:
-                $this->getNewUser($return);
-                $this->createUserPrompt($return);
+            case self::USE_OTHER_USER:
+                $this->getOtherUser($return);
                 break;
 
             case self::USE_ENV_USER:
@@ -50,21 +49,31 @@ class CreateDatabase extends AbstractStep
                 break;
         }
 
+        $this->generateSqlCommands($return);
+
         return $return;
     }
 
     /**
+     * Get database config.
+     *
      * @param array $return
      */
     protected function getEnvDatabase(array &$return)
     {
         $return['host'] = env('DB_HOST');
         $return['database'] = env('DB_DATABASE');
+        $return['localhost'] = 'localhost';
 
-        $return['commands'][] = "CREATE DATABASE IF NOT EXISTS {$return['database']};";
+        if ( ! in_array($return['host'], ['localhost', '127.0.0.1']))
+        {
+            $return['localhost'] = $this->command->ask('Database is on the other server. Provide local IP/hostname.');
+        }
     }
 
     /**
+     * Get user from environment.
+     *
      * @param array $return
      */
     protected function getEnvUser(array &$return)
@@ -74,29 +83,33 @@ class CreateDatabase extends AbstractStep
     }
 
     /**
+     * Ask info about 'root' user.
+     *
      * @param array $return
      */
-    protected function getNewUser(array &$return)
+    protected function getOtherUser(array &$return)
     {
-        $return['username'] = $this->command->ask('Provide user with <comment>CREATE DATABASE</comment> grants', 'root');
+        $return['username'] = $this->command->ask('Provide user\'s login with <comment>CREATE DATABASE</comment> grants', 'root');
         $return['password'] = $this->command->secret('Password');
     }
 
     /**
+     * Generate SQL commands.
+     *
      * @param array $return
      */
-    protected function createUserPrompt(array &$return)
+    private function generateSqlCommands(array &$return)
     {
-        if ($this->command->confirm('Do you want to create user from .env?'))
-        {
-            $return['commands'][] = sprintf(
-                "GRANT ALL PRIVILEGES ON %s.* TO %s@%s IDENTIFIED BY '%s';",
-                $return['database'],
-                env('DB_USERNAME'),
-                gethostname(),
-                env('DB_PASSWORD')
-            );
-        }
+        $return['commands'] = [];
+
+        $return['commands'][] = "CREATE DATABASE IF NOT EXISTS {$return['database']};";
+        $return['commands'][] = sprintf(
+            "GRANT ALL PRIVILEGES ON %s.* TO %s@%s IDENTIFIED BY '%s';",
+            $return['database'],
+            env('DB_USERNAME'),
+            $return['localhost'],
+            env('DB_PASSWORD')
+        );
     }
 
     /**
@@ -125,7 +138,7 @@ class CreateDatabase extends AbstractStep
      */
     public function preview($results)
     {
-        $this->command->info("We are about to run <comment>" . $this->prepareCommand($results) . "</comment>");
+        $this->command->info("This command will be executed: <comment>" . $this->prepareCommand($results) . "</comment>");
     }
 
     /**
