@@ -30,7 +30,7 @@ class Migrate extends AbstractStep
      */
     public function preview($results)
     {
-        $this->command->info('We are about to run <comment>php artisan migrate --force --no-interaction</comment>');
+        $this->command->info('This command will be executed: <comment>php artisan migrate:refresh --force --no-interaction</comment>');
     }
 
     /**

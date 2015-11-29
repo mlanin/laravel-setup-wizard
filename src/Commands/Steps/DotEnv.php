@@ -15,7 +15,7 @@ class DotEnv extends AbstractStep
      */
     public function prompt()
     {
-        return 'Do you want to set .env file?';
+        return 'Do you want to ' . (file_exists(base_path('.env')) ? 'update' : 'create') . ' .env file?';
     }
 
     /**
@@ -29,7 +29,7 @@ class DotEnv extends AbstractStep
 
         $file = config('setup.dot_env.default_file');
 
-        if (file_exists(base_path('.env')) && $this->command->confirm('We found existing .env file. Use it for default?', true))
+        if (file_exists(base_path('.env')) && $this->command->confirm('Existing .env file was found. Use it for defaults?', true))
         {
             $file = '.env';
         }
@@ -56,7 +56,7 @@ class DotEnv extends AbstractStep
      */
     protected function runInput($name, array $options, $default = null)
     {
-        return $this->command->ask($name, $default);
+        return $this->command->ask($this->generatePrompt($name, $options['prompt']), $default);
     }
 
     /**
@@ -69,7 +69,7 @@ class DotEnv extends AbstractStep
      */
     protected function runSelect($name, array $options, $default = null)
     {
-        return $this->command->choice($name, $options['options'], array_search($default, $options['options']));
+        return $this->command->choice($this->generatePrompt($name, $options['prompt']), $options['options'], array_search($default, $options['options']));
     }
 
     /**
@@ -80,11 +80,11 @@ class DotEnv extends AbstractStep
      * @param  string $default
      * @return string
      */
-    protected function runRandom($name, array $options, $default = 'random')
+    protected function runRandom($name, array $options, $default = 'SomeRandomString')
     {
-        $value = $this->command->ask($name . ' (live empty for random string)', $default);
+        $value = $this->command->ask($this->generatePrompt($name, $options['prompt']), $default);
 
-        if ($value === 'random')
+        if ($value === 'SomeRandomString')
         {
             $value = $this->getRandomKey(config('app.cipher'));
         }
@@ -119,6 +119,16 @@ class DotEnv extends AbstractStep
         list($keys, $values) = array_divide($results);
 
         $this->command->table(['Variable', 'Value'], collect($keys)->zip(collect($values))->toArray());
+    }
+
+    /**
+     * @param string $name
+     * @param string $prompt
+     * @return string
+     */
+    protected function generatePrompt($name, $prompt)
+    {
+        return $prompt . ' <comment>' . $name . '=?</comment>';
     }
 
     /**

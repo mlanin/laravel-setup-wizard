@@ -40,7 +40,7 @@ abstract class AbstractStep
 
         if ($this->command->confirm('Everything is right?'))
         {
-            $return = ( ! $pretend) ? $this->finish($results) : true;
+            $return = $pretend ? true : $this->finish($results);
 
             if ($return == false)
             {
