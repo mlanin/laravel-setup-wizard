@@ -12,6 +12,11 @@ class DotEnv extends AbstractStep
     const SELECT = 'select';
     const INPUT  = 'input';
 
+    /**
+     * Array of bootstrappers to reload Application config.
+     *
+     * @var array
+     */
     protected $boostrappers = [
         'Illuminate\Foundation\Bootstrap\DetectEnvironment',
         'Lanin\Laravel\SetupWizard\Support\LoadConfiguration',
