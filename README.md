@@ -1,7 +1,7 @@
 # Laravel-Setup-Wizard
 > Provide your Laravel project with handy setup wizard.
 
-Guide your customer through all installations steps he need to perform for a proper setup of your project.
+Guide your customer through all steps he need to perform for a proper setup of your project.
 
 ![help](http://lanin.me/images/setup.png)
 
@@ -26,12 +26,12 @@ Lanin\Laravel\SetupWizard\SetupWizardServiceProvider::class,
 After installation project will receive the new Artisan command:
 
 ```bash
-php artisan app:setup
+$ php artisan app:setup
 ```
 
 This command gives your customers the easy wizard for initial setup of the your project. By default it has 6 steps:
 
-1. Set new `.env` file from your `.env.example`
+1. Set new `.env` file from your `.env.example` or update existing
 1. Create new DB & user from `.env`
 1. Run migrations
 1. Run seeds
@@ -41,13 +41,13 @@ This command gives your customers the easy wizard for initial setup of the your 
 Also they can run single step manually by adding it's alias as an argument:
 
 ```bash
-php artisan app:setup create_user
+$ php artisan app:setup create_user
 ```
 
 For additional help use:
 
 ```bash
-php artisan help app:setup
+$ php artisan help app:setup
 ```
 
 ## Configuration

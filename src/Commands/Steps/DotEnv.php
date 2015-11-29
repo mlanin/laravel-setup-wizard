@@ -1,12 +1,22 @@
 <?php namespace Lanin\Laravel\SetupWizard\Commands\Steps;
 
+use Illuminate\Contracts\Config\Repository as RepositoryContract;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Str;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class DotEnv extends AbstractStep
 {
     const RANDOM = 'random';
     const SELECT = 'select';
     const INPUT  = 'input';
+
+    protected $boostrappers = [
+        'Illuminate\Foundation\Bootstrap\DetectEnvironment',
+        'Lanin\Laravel\SetupWizard\Support\LoadConfiguration',
+        'Illuminate\Foundation\Bootstrap\ConfigureLogging',
+    ];
 
     /**
      * Return short command description.
@@ -145,7 +155,18 @@ class DotEnv extends AbstractStep
         {
             $this->command->info('New .env file was saved');
 
-            \Dotenv::load(base_path());
+            /*
+             * "Rebootstrap" Application to load new env variables to the config using native Application::bootstrapWith([]) method.
+             *
+             * In current Laravel implementation there is no method to reload Application config fully or Application itself.
+             * Problem is that after reloading Config Repository it looses data from packages' config files
+             * that are not currently published in /config directory. They are loaded only once after Application is bootstrapped.
+             * And you can't force it to "rebootstrap" fully manually from outside (protected methods/properties).
+             *
+             * So the only way to "rebootstrap" it partly with custom Bootstrapper that uses existing Config Repository to
+             * reload all /config files.
+             */
+            $this->command->getLaravel()->bootstrapWith($this->boostrappers);
         }
         else
         {
