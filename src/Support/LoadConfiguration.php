@@ -2,16 +2,17 @@
 
 use Illuminate\Contracts\Foundation\Application;
 
-class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfiguration {
+class LoadConfiguration extends \Illuminate\Foundation\Bootstrap\LoadConfiguration
+{
 
-	/**
-	 * Update settings in the existing config repository.
-	 *
-	 * @param Application $app
-	 */
-	public function bootstrap(Application $app)
-	{
-		$this->loadConfigurationFiles($app, $app['config']);
-	}
+    /**
+     * Update settings in the existing config repository.
+     *
+     * @param Application $app
+     */
+    public function bootstrap(Application $app)
+    {
+        $this->loadConfigurationFiles($app, $app['config']);
+    }
 
 }
