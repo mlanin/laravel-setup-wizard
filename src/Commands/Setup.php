@@ -28,18 +28,26 @@ class Setup extends Command
      *
      * @var array
      */
-    protected $steps = [];
+    public $steps = [];
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->steps = config('setup.steps');
+    }
 
     /**
      * @inheritDoc
      */
     public function getHelp()
     {
-        $steps = config('setup.steps');
-
         $help = $this->description . ' Available steps:' . PHP_EOL;
 
-        foreach ($steps as $alias => $class)
+        foreach ($this->steps as $alias => $class)
         {
             $help .= '  - <comment>' . $alias . '</comment>' . PHP_EOL;
         }
@@ -55,8 +63,6 @@ class Setup extends Command
     public function handle()
     {
         $this->info(sprintf('%s (v%s)', config('setup.title'), self::VERSION));
-
-        $this->steps = config('setup.steps');
 
         $step = $this->argument('step');
         $pretend = (bool) $this->option('pretend');
@@ -125,7 +131,7 @@ class Setup extends Command
         }
 
         $class = $this->steps[$step];
-        $step = new $class($this);
+        $step  = new $class($this);
 
         if ( ! ($step instanceof AbstractStep))
         {

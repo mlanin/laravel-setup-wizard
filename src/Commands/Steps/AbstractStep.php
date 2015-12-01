@@ -9,7 +9,7 @@ abstract class AbstractStep
     /**
      * @var int
      */
-    protected $repeats = 0;
+    protected $repeats = 1;
 
     /**
      * @var Command
@@ -89,7 +89,7 @@ abstract class AbstractStep
      *
      * @return mixed
      */
-    abstract protected function prepare();
+    abstract public function prepare();
 
     /**
      * Preview results.

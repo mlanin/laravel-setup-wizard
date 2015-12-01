@@ -22,7 +22,7 @@ class CreateDatabase extends AbstractStep
      *
      * @return mixed
      */
-    protected function prepare()
+    public function prepare()
     {
         $source = $this->command->choice(
             'Do you want to use user from .env or provide another one?',

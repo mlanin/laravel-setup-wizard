@@ -17,7 +17,7 @@ class Seed extends AbstractStep
      *
      * @return mixed
      */
-    protected function prepare()
+    public function prepare()
     {
         return $this->command->ask('Seed to run', config('setup.seed.class'));
     }

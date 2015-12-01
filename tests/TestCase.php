@@ -2,6 +2,7 @@
 
 use Lanin\Laravel\SetupWizard\SetupWizardServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use ReflectionClass;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -11,7 +12,6 @@ abstract class TestCase extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
-        // Your code here
     }
 
     /**
@@ -22,8 +22,6 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-
-
         /** @var \Illuminate\Config\Repository $config */
         $config = $app['config'];
 
@@ -63,5 +61,45 @@ abstract class TestCase extends BaseTestCase
         return realpath(dirname(__DIR__) . '/tests/fixture') . $path;
     }
 
+    /**
+     * Make protected/private class property accessible.
+     *
+     * @param  string|object $class
+     * @param  string $name
+     * @return \ReflectionProperty
+     */
+    protected function getPublicProperty($class, $name)
+    {
+        if ( ! is_string($class))
+        {
+            $class = get_class($class);
+        }
 
+        $class    = new ReflectionClass($class);
+        $property = $class->getProperty($name);
+        $property->setAccessible(true);
+
+        return $property;
+    }
+
+    /**
+     * Make protected/private class method accessible.
+     *
+     * @param  string|object $class
+     * @param  string $name
+     * @return \ReflectionMethod
+     */
+    protected function getPublicMethod($class, $name)
+    {
+        if ( ! is_string($class))
+        {
+            $class = get_class($class);
+        }
+
+        $class  = new ReflectionClass($class);
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+
+        return $method;
+    }
 }

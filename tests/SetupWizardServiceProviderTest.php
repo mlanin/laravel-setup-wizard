@@ -24,6 +24,7 @@ class SetupWizardServiceProviderTest extends TestCase
     {
         $provided = $this->provider->provides();
         $defaults = ['setup-wizard.setup'];
+
         $this->assertCount(count($defaults), $provided);
         $this->assertEquals($defaults, $provided);
     }

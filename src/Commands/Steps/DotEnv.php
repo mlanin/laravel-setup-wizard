@@ -34,7 +34,7 @@ class DotEnv extends AbstractStep
      *
      * @return array
      */
-    protected function prepare()
+    public function prepare()
     {
         $result = [];
 

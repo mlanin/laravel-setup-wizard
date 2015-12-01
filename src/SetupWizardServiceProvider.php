@@ -34,7 +34,7 @@ class SetupWizardServiceProvider extends ServiceProvider
      */
     protected function registerCommand()
     {
-        $this->app->singleton('setup-wizard.setup', Setup::class);
+        $this->app->bind('setup-wizard.setup', Setup::class);
 
         $this->commands('setup-wizard.setup');
     }

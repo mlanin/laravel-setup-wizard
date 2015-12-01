@@ -17,7 +17,7 @@ class CreateUser extends AbstractStep
      *
      * @return mixed
      */
-    protected function prepare()
+    public function prepare()
     {
         $result = [];
         foreach (config('setup.create_user.fields') as $column => $title)

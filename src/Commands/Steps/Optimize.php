@@ -17,7 +17,7 @@ class Optimize extends AbstractStep
      *
      * @return mixed
      */
-    protected function prepare()
+    public function prepare()
     {
         // TODO: Implement prepare() method.
     }

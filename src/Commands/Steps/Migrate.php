@@ -17,7 +17,7 @@ class Migrate extends AbstractStep
      *
      * @return mixed
      */
-    protected function prepare()
+    public function prepare()
     {
         return null;
     }
