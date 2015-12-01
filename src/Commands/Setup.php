@@ -41,7 +41,7 @@ class Setup extends Command
 
         foreach ($steps as $alias => $class)
         {
-            $help .= '  - <comment>' . $alias . '</comment>'. PHP_EOL;
+            $help .= '  - <comment>' . $alias . '</comment>' . PHP_EOL;
         }
 
         return $help;
@@ -94,21 +94,56 @@ class Setup extends Command
      */
     protected function runStep($step, $pretend = false)
     {
-        if (isset($this->steps[$step]) && class_exists($this->steps[$step]))
+        try
         {
-            $class = $this->steps[$step];
-            $step  = new $class($this);
+            $step = $this->createStep($step);
 
             if ($this->confirm($step->prompt(), true))
             {
                 return $step->run($pretend);
             }
-        }
-        else
+        } catch (\Exception $e)
         {
-            $this->error("Step '{$step}' doesn't exist.");
+            $this->error($e->getMessage());
         }
 
         return false;
     }
+
+    /**
+     * Instantiate step class.
+     *
+     * @param string $step
+     * @return AbstractStep
+     * @throws \Exception
+     */
+    protected function createStep($step)
+    {
+        if ( ! $this->stepExist($step))
+        {
+            throw new \Exception("Step <comment>{$step}</comment> doesn't exist.");
+        }
+
+        $class = $this->steps[$step];
+        $step = new $class($this);
+
+        if ( ! ($step instanceof AbstractStep))
+        {
+            throw new \Exception("Step class <comment>{$class}</comment> should be an instance of AbstractStep.");
+        }
+
+        return $step;
+    }
+
+    /**
+     * Check if step exists.
+     *
+     * @param  string $step
+     * @return bool
+     */
+    protected function stepExist($step)
+    {
+        return isset($this->steps[$step]) && class_exists($this->steps[$step]);
+    }
+
 }

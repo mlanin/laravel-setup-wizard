@@ -10,7 +10,7 @@ class DotEnv extends \Dotenv
     /**
      * Overwrite to save variables to array.
      *
-     * @param string      $name
+     * @param string $name
      * @param string|null $value
      *
      * @return void

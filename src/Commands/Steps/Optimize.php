@@ -30,7 +30,9 @@ class Optimize extends AbstractStep
      */
     public function preview($results)
     {
-        $this->command->info('This command will be executed: <comment>php artisan optimize --force --no-interaction</comment>');
+        $this->command->info(
+            'This command will be executed: <comment>php artisan optimize --force --no-interaction</comment>'
+        );
     }
 
     /**

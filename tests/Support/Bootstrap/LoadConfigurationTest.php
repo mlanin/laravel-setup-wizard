@@ -6,44 +6,47 @@ use Lanin\Laravel\SetupWizard\Tests\TestCase;
 
 class LoadConfigurationTest extends TestCase
 {
-	/** @var LoadConfiguration */
-	private $bootstrapper;
+    /** @var LoadConfiguration */
+    private $bootstrapper;
 
-	public function setUp()
-	{
-		parent::setUp();
+    public function setUp()
+    {
+        parent::setUp();
 
-		$this->bootstrapper = new LoadConfiguration();
-	}
-	public function tearDown()
-	{
-		parent::tearDown();
+        $this->bootstrapper = new LoadConfiguration();
+    }
 
-		unset($this->bootstrapper);
-	}
+    public function tearDown()
+    {
+        parent::tearDown();
 
-	/** @test */
-	public function it_has_bootstrap_method()
-	{
-		$this->assertTrue(
-				is_callable([$this->bootstrapper, 'bootstrap']),
-				'Boostrapper doesn\'t have bootstrap() method'
-		);
-	}
+        unset($this->bootstrapper);
+    }
 
-	/** @test */
-	public function it_reloads_configuration()
-	{
-		$this->app['config']['foo'] = 'bar';
+    /** @test */
+    public function it_has_bootstrap_method()
+    {
+        $this->assertTrue(
+            is_callable([$this->bootstrapper, 'bootstrap']),
+            'Boostrapper doesn\'t have bootstrap() method'
+        );
+    }
 
-		$this->app->useEnvironmentPath($this->getFixturePath());
+    /** @test */
+    public function it_reloads_configuration()
+    {
+        $this->app['config']['foo'] = 'bar';
 
-		$this->app->bootstrapWith([
-				DetectEnvironment::class,
-				LoadConfiguration::class,
-		]);
+        $this->app->useEnvironmentPath($this->getFixturePath());
 
-		$this->assertEquals('bar', config('foo'));
-		$this->assertEquals('qwe123', config('app.key'));
-	}
+        $this->app->bootstrapWith(
+            [
+                DetectEnvironment::class,
+                LoadConfiguration::class,
+            ]
+        );
+
+        $this->assertEquals('bar', config('foo'));
+        $this->assertEquals('qwe123', config('app.key'));
+    }
 }

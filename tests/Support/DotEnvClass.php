@@ -5,13 +5,13 @@ use Lanin\Laravel\SetupWizard\Tests\TestCase;
 
 class DotEnvClass extends TestCase
 {
-	/** @test */
-	public function it_caches_env_variables()
-	{
-		DotEnv::load($this->getFixturePath(), '.env.example');
+    /** @test */
+    public function it_caches_env_variables()
+    {
+        DotEnv::load($this->getFixturePath(), '.env.example');
 
-		$this->assertAttributeNotEmpty('variables', DotEnv::class);
+        $this->assertAttributeNotEmpty('variables', DotEnv::class);
 
-		$this->assertEquals(16, count(DotEnv::$variables));
-	}
+        $this->assertEquals(16, count(DotEnv::$variables));
+    }
 }

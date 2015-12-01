@@ -1,10 +1,6 @@
 <?php namespace Lanin\Laravel\SetupWizard\Commands\Steps;
 
-use Illuminate\Contracts\Config\Repository as RepositoryContract;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Str;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class DotEnv extends AbstractStep
 {
@@ -44,7 +40,11 @@ class DotEnv extends AbstractStep
 
         $file = config('setup.dot_env.default_file');
 
-        if (file_exists(base_path('.env')) && $this->command->confirm('Existing .env file was found. Use it for defaults?', true))
+        if (file_exists(base_path('.env')) && $this->command->confirm(
+                'Existing .env file was found. Use it for defaults?',
+                true
+            )
+        )
         {
             $file = '.env';
         }
@@ -53,7 +53,10 @@ class DotEnv extends AbstractStep
 
         foreach (\Lanin\Laravel\SetupWizard\Support\DotEnv::$variables as $name => $default)
         {
-            $options = config('setup.dot_env.variables.' . $name, ['type' => self::INPUT, 'prompt' => 'Provide value for environment variable']);
+            $options = config(
+                'setup.dot_env.variables.' . $name,
+                ['type' => self::INPUT, 'prompt' => 'Provide value for environment variable']
+            );
 
             $result[$name] = $this->{'run' . $options['type']}($name, $options, $default);
         }
@@ -84,7 +87,11 @@ class DotEnv extends AbstractStep
      */
     protected function runSelect($name, array $options, $default = null)
     {
-        return $this->command->choice($this->generatePrompt($name, $options['prompt']), $options['options'], array_search($default, $options['options']));
+        return $this->command->choice(
+            $this->generatePrompt($name, $options['prompt']),
+            $options['options'],
+            array_search($default, $options['options'])
+        );
     }
 
     /**
@@ -110,7 +117,7 @@ class DotEnv extends AbstractStep
     /**
      * Generate a random key for the application.
      *
-     * @param  string  $cipher
+     * @param  string $cipher
      * @return string
      */
     protected function getRandomKey($cipher)

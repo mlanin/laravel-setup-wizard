@@ -30,7 +30,9 @@ class Seed extends AbstractStep
      */
     public function preview($results)
     {
-        $this->command->info('This command will be executed: <comment>php artisan db:seed --class=' . $results . ' --force --no-interaction</comment>');
+        $this->command->info(
+            'This command will be executed: <comment>php artisan db:seed --class=' . $results . ' --force --no-interaction</comment>'
+        );
     }
 
     /**
@@ -41,6 +43,9 @@ class Seed extends AbstractStep
      */
     public function finish($results)
     {
-        return ! (bool) \Artisan::call('db:seed', ['--class' => $results, '--force' => true, '--no-interaction' => true]);
+        return ! (bool) \Artisan::call(
+            'db:seed',
+            ['--class' => $results, '--force' => true, '--no-interaction' => true]
+        );
     }
 }

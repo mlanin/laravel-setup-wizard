@@ -61,8 +61,8 @@ class CreateDatabase extends AbstractStep
      */
     protected function getEnvDatabase(array &$return)
     {
-        $return['host'] = env('DB_HOST');
-        $return['database'] = env('DB_DATABASE');
+        $return['host']      = env('DB_HOST');
+        $return['database']  = env('DB_DATABASE');
         $return['localhost'] = 'localhost';
 
         if ( ! in_array($return['host'], ['localhost', '127.0.0.1']))
@@ -89,7 +89,10 @@ class CreateDatabase extends AbstractStep
      */
     protected function getOtherUser(array &$return)
     {
-        $return['username'] = $this->command->ask('Provide user\'s login with <comment>CREATE DATABASE</comment> grants', 'root');
+        $return['username'] = $this->command->ask(
+            'Provide user\'s login with <comment>CREATE DATABASE</comment> grants',
+            'root'
+        );
         $return['password'] = $this->command->secret('Password');
     }
 
@@ -138,7 +141,9 @@ class CreateDatabase extends AbstractStep
      */
     public function preview($results)
     {
-        $this->command->info("This command will be executed: <comment>" . $this->prepareCommand($results) . "</comment>");
+        $this->command->info(
+            "This command will be executed: <comment>" . $this->prepareCommand($results) . "</comment>"
+        );
     }
 
     /**
@@ -151,9 +156,12 @@ class CreateDatabase extends AbstractStep
     {
         $process = new Process($this->prepareCommand($results, true));
 
-        $process->run(function ($type, $output) use (&$result) {
-            $this->command->line($output);
-        });
+        $process->run(
+            function ($type, $output) use (&$result)
+            {
+                $this->command->line($output);
+            }
+        );
 
         return ! (bool) $process->getExitCode();
     }
