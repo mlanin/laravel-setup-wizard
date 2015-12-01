@@ -11,7 +11,7 @@ class SetupWizardServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->publishes([
-			__DIR__.'/../config/setup.php' => config_path('setup.php'),
+				__DIR__.'/../config/setup.php' => config_path('setup.php'),
 		]);
 	}
 
@@ -46,5 +46,17 @@ class SetupWizardServiceProvider extends ServiceProvider {
 		$this->mergeConfigFrom(
 				__DIR__ . '/../config/setup.php', 'setup'
 		);
+	}
+
+	/**
+	 * Get the services provided by the provider.
+	 *
+	 * @return array
+	 */
+	public function provides()
+	{
+		return [
+			'setup-wizard.setup'
+		];
 	}
 }
