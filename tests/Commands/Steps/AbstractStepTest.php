@@ -87,7 +87,6 @@ class AbstractStepTest extends TestCase
     }
 }
 
-
 class TestStep extends AbstractStep
 {
 
