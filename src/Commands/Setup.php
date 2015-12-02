@@ -111,8 +111,10 @@ class Setup extends Command
             {
                 return $step->run($pretend);
             }
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
+            var_dump($e->getMessage());
             $this->error($e->getMessage());
         }
 
