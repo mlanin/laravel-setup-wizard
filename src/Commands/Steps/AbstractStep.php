@@ -42,7 +42,7 @@ abstract class AbstractStep
         {
             $return = $pretend ? true : $this->finish($results);
 
-            if ($return == false)
+            if ($return === false)
             {
                 $return = $this->repeat();
             }

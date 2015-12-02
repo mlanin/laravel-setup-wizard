@@ -109,6 +109,26 @@ class SetupTest extends TestCase
     }
 
     /** @test */
+    public function it_can_run_all_steps_and_return_false()
+    {
+        $runAllSteps = $this->getPublicMethod($this->setup, 'runAllSteps');
+
+        $setup = \Mockery::mock($this->setup)->shouldAllowMockingProtectedMethods();
+
+        $steps = config('setup.steps');
+
+        $property = $this->getPublicProperty($setup, 'steps');
+        $property->setValue($setup, $steps);
+
+        foreach (array_keys($steps) as $step)
+        {
+            $setup->shouldReceive('runStep')->with($step, false)->andReturn(false);
+        }
+
+        $this->assertFalse($runAllSteps->invoke($setup));
+    }
+
+    /** @test */
     public function it_can_be_handled_without_defined_step()
     {
         $setup = \Mockery::mock(Setup::class)->makePartial()->shouldAllowMockingProtectedMethods();

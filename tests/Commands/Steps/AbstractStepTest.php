@@ -42,6 +42,30 @@ class AbstractStepTest extends TestCase
     }
 
     /** @test */
+    public function it_will_ask_for_repeat_if_user_cancels()
+    {
+        $command = \Mockery::mock(Setup::class)->makePartial();
+        $command->shouldReceive('confirm')->with('Everything is right?')->andReturn(false)->once();
+        $command->shouldReceive('confirm')->with('Do you want to repeat step?')->andReturn(false)->once();
+
+        $step = new TestStep($command);
+        $this->assertFalse($step->run());
+    }
+
+    /** @test */
+    public function it_will_be_repeated_on_finish_error()
+    {
+        $command = \Mockery::mock(Setup::class)->makePartial();
+        $command->shouldReceive('confirm')->with('Everything is right?')->andReturn(true)->once();
+        $command->shouldReceive('confirm')->with('Do you want to repeat step?')->andReturn(false)->once();
+
+        $step = \Mockery::mock(TestStep::class, [$command])->makePartial();
+        $step->shouldReceive('finish')->andReturn(false)->once();
+
+        $this->assertFalse($step->run());
+    }
+
+    /** @test */
     public function it_can_be_repeated_three_times()
     {
         $this->assertTrue($this->step->repeat());
