@@ -114,7 +114,6 @@ class Setup extends Command
         }
         catch (\Exception $e)
         {
-            var_dump($e->getMessage());
             $this->error($e->getMessage());
         }
 

@@ -93,7 +93,7 @@ class SetupTest extends TestCase
     {
         $runAllSteps = $this->getPublicMethod($this->setup, 'runAllSteps');
 
-        $setup = \Mockery::mock($this->setup)->shouldAllowMockingProtectedMethods();
+        $setup = \Mockery::mock($this->setup)->makePartial()->shouldAllowMockingProtectedMethods();
 
         $steps = config('setup.steps');
 
@@ -113,7 +113,7 @@ class SetupTest extends TestCase
     {
         $runAllSteps = $this->getPublicMethod($this->setup, 'runAllSteps');
 
-        $setup = \Mockery::mock($this->setup)->shouldAllowMockingProtectedMethods();
+        $setup = \Mockery::mock($this->setup)->makePartial()->shouldAllowMockingProtectedMethods();
 
         $steps = config('setup.steps');
 
