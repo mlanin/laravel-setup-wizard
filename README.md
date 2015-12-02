@@ -1,4 +1,7 @@
-# Laravel-Setup-Wizard [badge_build]:https://img.shields.io/travis/mlanin/laravel-setup-wizard.svg?style=flat-square [badge_coverage]:https://img.shields.io/scrutinizer/coverage/g/mlanin/laravel-setup-wizard.svg?style=flat-square
+# Laravel-Setup-Wizard 
+[![Travis](https://img.shields.io/travis/rust-lang/rust.svg)](https://travis-ci.org/mlanin/laravel-setup-wizard)
+[![Scrutinizer Coverage](https://img.shields.io/scrutinizer/coverage/g/mlanin/laravel-setup-wizard.svg)](https://scrutinizer-ci.com/g/mlanin/laravel-setup-wizard)
+
 > Provide your Laravel project with handy setup wizard.
 
 Guide your customer through all steps he need to perform for a proper setup of your project.
