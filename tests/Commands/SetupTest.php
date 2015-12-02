@@ -95,7 +95,12 @@ class SetupTest extends TestCase
 
         $setup = \Mockery::mock($this->setup)->shouldAllowMockingProtectedMethods();
 
-        foreach (array_keys(config('setup.steps')) as $step)
+        $steps = config('setup.steps');
+
+        $property = $this->getPublicProperty($setup, 'steps');
+        $property->setValue($setup, $steps);
+
+        foreach (array_keys($steps) as $step)
         {
             $setup->shouldReceive('runStep')->with($step, false)->andReturn(true);
         }

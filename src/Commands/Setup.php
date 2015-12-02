@@ -82,13 +82,16 @@ class Setup extends Command
      */
     protected function runAllSteps($pretend = false)
     {
-        $return = 0;
+        $return = true;
         foreach (array_keys($this->steps) as $step)
         {
-            $return += (int) $this->runStep($step, $pretend);
+            if ($this->runStep($step, $pretend) === false)
+            {
+                $return = false;
+            }
         }
 
-        return ! (bool) $return;
+        return $return;
     }
 
     /**
