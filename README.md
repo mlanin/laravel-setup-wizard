@@ -1,5 +1,6 @@
 # Laravel-Setup-Wizard 
 [![Travis](https://img.shields.io/travis/rust-lang/rust.svg)](https://travis-ci.org/mlanin/laravel-setup-wizard)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/mlanin/laravel-setup-wizard.svg)](https://scrutinizer-ci.com/g/mlanin/laravel-setup-wizard/)
 [![Scrutinizer Coverage](https://img.shields.io/scrutinizer/coverage/g/mlanin/laravel-setup-wizard.svg)](https://scrutinizer-ci.com/g/mlanin/laravel-setup-wizard)
 
 > Provide your Laravel project with handy setup wizard.
@@ -41,10 +42,10 @@ This command gives your customers the easy wizard for initial setup of the your 
 1. Create first user
 1. Optimize code
 
-Also they can run single step manually by adding it's alias as an argument:
+Also they can run steps manually by adding it's alias as an argument:
 
 ```bash
-$ php artisan app:setup create_user
+$ php artisan app:setup migrate seed
 ```
 
 For additional help use:
