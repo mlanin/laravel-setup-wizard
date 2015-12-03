@@ -7,7 +7,6 @@ use Lanin\Laravel\SetupWizard\Tests\TestCase;
 
 class CreateUserTest extends TestCase
 {
-
     /**
      * @return \Mockery\Mock
      */
