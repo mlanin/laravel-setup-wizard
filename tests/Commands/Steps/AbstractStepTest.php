@@ -1,4 +1,4 @@
-<?php namespace Lanin\Laravel\SetupWizard\Tests\Commands;
+<?php namespace Lanin\Laravel\SetupWizard\Tests\Commands\Steps;
 
 use Lanin\Laravel\SetupWizard\Commands\Setup;
 use Lanin\Laravel\SetupWizard\Commands\Steps\AbstractStep;
