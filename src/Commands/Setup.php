@@ -64,10 +64,9 @@ class Setup extends Command
     {
         $this->info(sprintf('%s (v%s)', config('setup.title'), self::VERSION));
 
-        $step = $this->argument('step');
         $pretend = (bool) $this->option('pretend');
-
-        $return = empty($step) ? $this->runAllSteps($pretend) : $this->runStep($step, $pretend);
+        $steps   = (array) $this->argument('step');
+        $return  = $this->runSteps($steps, $pretend);
 
         $this->info('Setup finished.');
 
@@ -77,13 +76,16 @@ class Setup extends Command
     /**
      * Run all steps one by one.
      *
+     * @param  array $steps
      * @param  bool $pretend
      * @return bool
      */
-    protected function runAllSteps($pretend = false)
+    protected function runSteps($steps = [], $pretend = false)
     {
         $return = true;
-        foreach (array_keys($this->steps) as $step)
+        $steps  = empty($steps) ? array_keys($this->steps) : $steps;
+
+        foreach ($steps as $step)
         {
             if ($this->runStep($step, $pretend) === false)
             {

@@ -80,18 +80,16 @@ class SetupTest extends TestCase
     /** @test */
     public function it_shows_error_on_unknown_step()
     {
-        $runStep = $this->getPublicMethod($this->setup, 'runStep');
-
         $setup = \Mockery::mock($this->setup);
         $setup->shouldReceive('error')->with("Step <comment>foo</comment> doesn't exist.");
 
+        $runStep = $this->getPublicMethod($setup, 'runStep');
         $this->assertFalse($runStep->invoke($setup, 'foo'));
     }
 
     /** @test */
     public function it_can_run_all_steps()
     {
-        $runAllSteps = $this->getPublicMethod($this->setup, 'runAllSteps');
 
         $setup = \Mockery::mock(Setup::class)->makePartial()->shouldAllowMockingProtectedMethods();
 
@@ -105,13 +103,32 @@ class SetupTest extends TestCase
             $setup->shouldReceive('runStep')->with($step, false)->andReturn(true);
         }
 
-        $this->assertTrue($runAllSteps->invoke($setup));
+        $runSteps = $this->getPublicMethod($setup, 'runSteps');
+        $this->assertTrue($runSteps->invoke($setup));
+    }
+
+    /** @test */
+    public function it_can_run_defined_steps()
+    {
+        $steps = config('setup.steps');
+
+        $setup = \Mockery::mock(Setup::class)->makePartial()->shouldAllowMockingProtectedMethods();
+
+        $property = $this->getPublicProperty($setup, 'steps');
+        $property->setValue($setup, $steps);
+
+        foreach (array_keys($steps) as $step)
+        {
+            $setup->shouldReceive('runStep')->with($step, false)->andReturn(true);
+        }
+
+        $runSteps = $this->getPublicMethod($setup, 'runSteps');
+        $this->assertTrue($runSteps->invoke($setup, array_keys(config('setup.steps'))));
     }
 
     /** @test */
     public function it_can_run_all_steps_and_return_false()
     {
-        $runAllSteps = $this->getPublicMethod($this->setup, 'runAllSteps');
 
         $setup = \Mockery::mock(Setup::class)->makePartial()->shouldAllowMockingProtectedMethods();
 
@@ -125,7 +142,8 @@ class SetupTest extends TestCase
             $setup->shouldReceive('runStep')->with($step, false)->andReturn(false);
         }
 
-        $this->assertFalse($runAllSteps->invoke($setup));
+        $runSteps = $this->getPublicMethod($setup, 'runSteps');
+        $this->assertFalse($runSteps->invoke($setup));
     }
 
     /** @test */
