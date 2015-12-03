@@ -9,7 +9,7 @@ class Migrate extends AbstractStep
      */
     public function prompt()
     {
-        return 'Run database migration?';
+        return 'Run database migrations?';
     }
 
     /**

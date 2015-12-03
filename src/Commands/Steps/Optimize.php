@@ -19,7 +19,7 @@ class Optimize extends AbstractStep
      */
     public function prepare()
     {
-        // TODO: Implement prepare() method.
+        return null;
     }
 
     /**
