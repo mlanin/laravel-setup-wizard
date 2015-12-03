@@ -85,6 +85,21 @@ class AbstractStepTest extends TestCase
         $runStep = $this->getPublicMethod($this->setup, 'runStep');
         $this->assertTrue($runStep->invoke($this->setup, 'test'));
     }
+
+    /** @test */
+    public function it_can_transform_array_to_table_usage()
+    {
+        $step = new TestStep($this->mockCommand());
+        $arrayToTable = $this->getPublicMethod($step, 'arrayToTable');
+
+        $this->assertEquals(
+            [
+                ['foo', 'bar'],
+                ['qwe', 123],
+            ],
+            $arrayToTable->invoke($step, ['foo' => 'bar', 'qwe' => 123])
+        );
+    }
 }
 
 class TestStep extends AbstractStep

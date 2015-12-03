@@ -78,6 +78,19 @@ abstract class AbstractStep
     }
 
     /**
+     * Transform associative array to use in command->table() method.
+     *
+     * @param  array $array
+     * @return array
+     */
+    protected function arrayToTable(array $array)
+    {
+        list($keys, $values) = array_divide($array);
+
+        return collect($keys)->zip(collect($values))->toArray();
+    }
+
+    /**
      * Return command prompt text.
      *
      * @return string

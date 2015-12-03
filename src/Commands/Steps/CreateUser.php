@@ -30,6 +30,8 @@ class CreateUser extends AbstractStep
             }
         }
 
+        $result['__table'] = $this->getTable(config('setup.create_user.table'));
+
         return $result;
     }
 
@@ -41,10 +43,8 @@ class CreateUser extends AbstractStep
      */
     public function preview($results)
     {
-        list($keys, $values) = array_divide($results);
-
-        $this->command->info('I will insert this values into <comment>' . $this->getTable() . '</comment> table');
-        $this->command->table(['column', 'value'], collect($keys)->zip(collect($values))->toArray());
+        $this->command->info('I will insert this values into <comment>' . $results['__table'] . '</comment> table');
+        $this->command->table(['column', 'value'], $this->arrayToTable($results));
     }
 
     /**
@@ -55,7 +55,8 @@ class CreateUser extends AbstractStep
      */
     public function finish($results)
     {
-        $table = $this->getTable();
+        $table = $results['__table'];
+        unset($results['__table']);
 
         return \DB::table($table)->insert($results);
     }
@@ -63,29 +64,38 @@ class CreateUser extends AbstractStep
     /**
      * Get users table name.
      *
-     * @return mixed
+     * @param  string $table
+     * @return string
      */
-    protected function getTable()
+    protected function getTable($table = '')
     {
-        $table = config('setup.create_user.table');
-
         if (empty($table))
         {
             switch (config('auth.driver'))
             {
                 case 'eloquent':
-                    $model = config('auth.model');
-                    $model = new $model();
-                    $table = $model->getTable();
+                    $table = $this->getTableByModelClass(config('auth.model'));
                     break;
                 case 'database':
                 default:
                     $table = config('auth.table');
                     break;
             }
-
-            return $table;
         }
+
+        return $table;
+    }
+
+    /**
+     * Resolve user's model and get associated table.
+     *
+     * @param  string $model
+     * @return string
+     */
+    protected function getTableByModelClass($model)
+    {
+        $model = new $model();
+        $table = $model->getTable();
 
         return $table;
     }
