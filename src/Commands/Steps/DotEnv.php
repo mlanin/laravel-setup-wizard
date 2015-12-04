@@ -26,7 +26,28 @@ class DotEnv extends AbstractStep
      */
     public function prompt()
     {
-        return 'Do you want to ' . (file_exists(base_path('.env')) ? 'update' : 'create') . ' .env file?';
+        return 'Do you want to ' . ($this->envFileExist() ? 'update' : 'create') . ' .env file?';
+    }
+
+    /**
+     * Check if .env file exist
+     *
+     * @return bool
+     */
+    protected function envFileExist()
+    {
+        return file_exists($this->envFilePath('.env'));
+    }
+
+    /**
+     * Return path where to search .env files.
+     *
+     * @param  string $file
+     * @return string
+     */
+    protected function envFilePath($file = '.env')
+    {
+        return base_path($file);
     }
 
     /**
@@ -38,30 +59,53 @@ class DotEnv extends AbstractStep
     {
         $result = [];
 
-        $file = config('setup.dot_env.default_file');
+        $file = $this->envFileToUseForDefaults();
 
-        if (file_exists(base_path('.env')) && $this->command->confirm(
-                'Existing .env file was found. Use it for defaults?',
-                true
-            )
-        )
-        {
-            $file = '.env';
-        }
-
-        \Lanin\Laravel\SetupWizard\Support\DotEnv::load(base_path(), $file);
+        \Lanin\Laravel\SetupWizard\Support\DotEnv::load($this->envFilePath(), $file);
 
         foreach (\Lanin\Laravel\SetupWizard\Support\DotEnv::$variables as $name => $default)
         {
-            $options = config(
-                'setup.dot_env.variables.' . $name,
-                ['type' => self::INPUT, 'prompt' => 'Provide value for environment variable']
-            );
+            $options = $this->getVariableOptions($name);
 
             $result[$name] = $this->{'run' . $options['type']}($name, $options, $default);
         }
 
         return $result;
+    }
+
+    /**
+     * Get variable options from configs.
+     *
+     * @param  string $name
+     * @return array
+     */
+    protected function getVariableOptions($name)
+    {
+        $options = config(
+            'setup.dot_env.variables.' . $name,
+            ['type' => self::INPUT, 'prompt' => 'Provide value for environment variable']
+        );
+
+        return $options;
+    }
+
+    /**
+     * Chooses what env file to use.
+     *
+     * @return string
+     */
+    protected function envFileToUseForDefaults()
+    {
+        $file = config('setup.dot_env.default_file');
+
+        if ($this->envFileExist() &&
+            $this->command->confirm('Existing .env file was found. Use it for defaults?', true)
+        )
+        {
+            $file = '.env';
+        }
+
+        return $file;
     }
 
     /**
@@ -163,7 +207,7 @@ class DotEnv extends AbstractStep
     {
         if ($return = $this->saveFile($results))
         {
-            $this->command->info('New .env file was saved');
+            $this->command->info('New .env file was saved.');
 
             /*
              * "Rebootstrap" Application to load new env variables to the config
@@ -198,7 +242,7 @@ class DotEnv extends AbstractStep
      */
     protected function saveFile($results)
     {
-        $file = fopen(base_path('.env'), 'w+');
+        $file = fopen($this->envFilePath('.env'), 'w+');
         foreach ($results as $variable => $value)
         {
             fwrite($file, $variable . '=' . $value . PHP_EOL);

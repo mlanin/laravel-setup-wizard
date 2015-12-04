@@ -36,7 +36,7 @@ class SetupTest extends TestCase
     /** @test */
     public function it_checks_if_step_exists_in_config()
     {
-        $stepExist = $this->getPublicMethod($this->setup, 'stepExist');
+        $stepExist = $this->getPublicMethod('stepExist', $this->setup);
 
         $this->assertFalse($stepExist->invoke($this->setup, 'foo'));
         $this->assertTrue($stepExist->invoke($this->setup, key(config('setup.steps'))));
@@ -47,7 +47,7 @@ class SetupTest extends TestCase
     {
         $this->setExpectedException(\Exception::class, "Step <comment>foo</comment> doesn't exist.");
 
-        $createStep = $this->getPublicMethod($this->setup, 'createStep');
+        $createStep = $this->getPublicMethod('createStep', $this->setup);
         $createStep->invoke($this->setup, 'foo');
     }
 
@@ -61,14 +61,14 @@ class SetupTest extends TestCase
         $steps['foo'] = \stdClass::class;
         $property->setValue($this->setup, $steps);
 
-        $createStep = $this->getPublicMethod($this->setup, 'createStep');
+        $createStep = $this->getPublicMethod('createStep', $this->setup);
         $createStep->invoke($this->setup, 'foo');
     }
 
     /** @test */
     public function it_can_create_all_default_steps_by_alias()
     {
-        $createStep = $this->getPublicMethod($this->setup, 'createStep');
+        $createStep = $this->getPublicMethod('createStep', $this->setup);
 
         foreach (array_keys(config('setup.steps')) as $step)
         {
@@ -83,7 +83,7 @@ class SetupTest extends TestCase
         $setup = \Mockery::mock($this->setup);
         $setup->shouldReceive('error')->with("Step <comment>foo</comment> doesn't exist.");
 
-        $runStep = $this->getPublicMethod($setup, 'runStep');
+        $runStep = $this->getPublicMethod('runStep', $setup);
         $this->assertFalse($runStep->invoke($setup, 'foo'));
     }
 
@@ -103,7 +103,7 @@ class SetupTest extends TestCase
             $setup->shouldReceive('runStep')->with($step, false)->andReturn(true);
         }
 
-        $runSteps = $this->getPublicMethod($setup, 'runSteps');
+        $runSteps = $this->getPublicMethod('runSteps', $setup);
         $this->assertTrue($runSteps->invoke($setup));
     }
 
@@ -122,7 +122,7 @@ class SetupTest extends TestCase
             $setup->shouldReceive('runStep')->with($step, false)->andReturn(true);
         }
 
-        $runSteps = $this->getPublicMethod($setup, 'runSteps');
+        $runSteps = $this->getPublicMethod('runSteps', $setup);
         $this->assertTrue($runSteps->invoke($setup, array_keys(config('setup.steps'))));
     }
 
@@ -142,7 +142,7 @@ class SetupTest extends TestCase
             $setup->shouldReceive('runStep')->with($step, false)->andReturn(false);
         }
 
-        $runSteps = $this->getPublicMethod($setup, 'runSteps');
+        $runSteps = $this->getPublicMethod('runSteps', $setup);
         $this->assertFalse($runSteps->invoke($setup));
     }
 

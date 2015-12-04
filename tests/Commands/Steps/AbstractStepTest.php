@@ -82,7 +82,7 @@ class AbstractStepTest extends TestCase
         $steps['test'] = TestStep::class;
         $property->setValue($this->setup, $steps);
 
-        $runStep = $this->getPublicMethod($this->setup, 'runStep');
+        $runStep = $this->getPublicMethod('runStep', $this->setup);
         $this->assertTrue($runStep->invoke($this->setup, 'test'));
     }
 
@@ -90,7 +90,7 @@ class AbstractStepTest extends TestCase
     public function it_can_transform_array_to_table_usage()
     {
         $step = new TestStep($this->mockCommand());
-        $arrayToTable = $this->getPublicMethod($step, 'arrayToTable');
+        $arrayToTable = $this->getPublicMethod('arrayToTable', $step);
 
         $this->assertEquals(
             [

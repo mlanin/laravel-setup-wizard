@@ -31,7 +31,7 @@ class CreateUserTest extends TestCase
         $command = $this->mockCommand();
         $step = new CreateUser($command);
 
-        $getTable = $this->getPublicMethod($step, 'getTable');
+        $getTable = $this->getPublicMethod('getTable', $step);
         $this->assertEquals('foo', $getTable->invoke($step, 'foo'));
     }
 
@@ -44,7 +44,7 @@ class CreateUserTest extends TestCase
         $command = $this->mockCommand();
         $step = new CreateUser($command);
 
-        $getTable = $this->getPublicMethod($step, 'getTable');
+        $getTable = $this->getPublicMethod('getTable', $step);
         $this->assertEquals(config('auth.table'), $getTable->invoke($step));
     }
 
@@ -57,7 +57,7 @@ class CreateUserTest extends TestCase
         $command = $this->mockCommand();
         $step = new CreateUser($command);
 
-        $getTable = $this->getPublicMethod($step, 'getTable');
+        $getTable = $this->getPublicMethod('getTable', $step);
         $this->assertEquals('test_users', $getTable->invoke($step));
     }
 
@@ -93,7 +93,14 @@ class CreateUserTest extends TestCase
         $command->shouldReceive('info')->with(
             'I will insert this values into <comment>test_users</comment> table'
         )->once();
-        $command->shouldReceive('table')->once();
+        $command->shouldReceive('table')->with(
+            ['column', 'value'],
+            [
+                ['name', 'John'],
+                ['email', 'john@example.com'],
+                ['password', 'hash'],
+            ]
+        )->once();
 
         $step = new CreateUser($command);
         $this->assertNull($step->preview([

@@ -65,7 +65,7 @@ class CreateMysqlDatabaseTest extends TestCase
         $command->shouldReceive('ask')->with('Database is on the other server. Provide local IP/hostname.')->andReturn($this->databaseHost)->once();
 
         $step = new CreateMysqlDatabase($command);
-        $getDatabaseConfigs = $this->getPublicMethod($step, 'getDatabaseConfigs');
+        $getDatabaseConfigs = $this->getPublicMethod('getDatabaseConfigs', $step);
 
         $return = [];
 
@@ -95,7 +95,7 @@ class CreateMysqlDatabaseTest extends TestCase
         $command->shouldReceive('secret')->with('Password')->andReturn($password)->once();
 
         $step = new CreateMysqlDatabase($command);
-        $getOtherConnectionUser = $this->getPublicMethod($step, 'getOtherConnectionUser');
+        $getOtherConnectionUser = $this->getPublicMethod('getOtherConnectionUser', $step);
 
         $return = [];
 
@@ -109,7 +109,7 @@ class CreateMysqlDatabaseTest extends TestCase
     public function it_can_generate_sql_commands()
     {
         $step = new CreateMysqlDatabase($this->mockCommand());
-        $generateSqlCommands = $this->getPublicMethod($step, 'generateSqlCommands');
+        $generateSqlCommands = $this->getPublicMethod('generateSqlCommands', $step);
 
         $return = $this->databaseConfig;
         $return['localhost'] = $this->databaseHost;
@@ -133,7 +133,7 @@ class CreateMysqlDatabaseTest extends TestCase
         $password = 'password';
 
         $step = new CreateMysqlDatabase($this->mockCommand());
-        $generateConsoleCommand = $this->getPublicMethod($step, 'generateConsoleCommand');
+        $generateConsoleCommand = $this->getPublicMethod('generateConsoleCommand', $step);
 
         $return = $this->databaseConfig;
         $return['localhost'] = $this->databaseHost;

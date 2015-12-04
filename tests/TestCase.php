@@ -85,11 +85,11 @@ abstract class TestCase extends BaseTestCase
     /**
      * Make protected/private class method accessible.
      *
-     * @param  string|object $class
      * @param  string $name
+     * @param  string|object $class
      * @return \ReflectionMethod
      */
-    protected function getPublicMethod($class, $name)
+    protected function getPublicMethod($name, $class)
     {
         if ( ! is_string($class))
         {

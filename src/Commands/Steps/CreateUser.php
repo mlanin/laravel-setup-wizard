@@ -43,7 +43,10 @@ class CreateUser extends AbstractStep
      */
     public function preview($results)
     {
-        $this->command->info('I will insert this values into <comment>' . $results['__table'] . '</comment> table');
+        $table = $results['__table'];
+        unset($results['__table']);
+
+        $this->command->info('I will insert this values into <comment>' . $table . '</comment> table');
         $this->command->table(['column', 'value'], $this->arrayToTable($results));
     }
 
