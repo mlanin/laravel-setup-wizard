@@ -5,7 +5,7 @@ use Lanin\Laravel\SetupWizard\Commands\Steps\AbstractStep;
 
 class Setup extends Command
 {
-    const VERSION = '0.1.0';
+    const VERSION = '0.1.2';
 
     /**
      * The name and signature of the console command.
