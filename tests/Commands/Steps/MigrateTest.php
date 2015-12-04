@@ -45,12 +45,9 @@ class MigrateTest extends TestCase
     }
 
     /** @test */
-    public function it_runs_seed_artisan_command()
+    public function it_runs_migrate_artisan_command()
     {
-        $artisan = \Mockery::mock($this->app['Illuminate\Contracts\Console\Kernel']);
-        $artisan->shouldReceive('call')->with('migrate:refresh', ['--force' => true, '--no-interaction' => true])->andReturn(0)->once();
-
-        $this->app['Illuminate\Contracts\Console\Kernel'] = $artisan;
+        \Artisan::shouldReceive('call')->with('migrate:refresh', ['--force' => true, '--no-interaction' => true])->andReturn(0)->once();
 
         $step = new Migrate($this->mockCommand());
         $this->assertTrue($step->finish(null));

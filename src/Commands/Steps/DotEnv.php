@@ -138,9 +138,7 @@ class DotEnv extends AbstractStep
      */
     public function preview($results)
     {
-        list($keys, $values) = array_divide($results);
-
-        $this->command->table(['Variable', 'Value'], collect($keys)->zip(collect($values))->toArray());
+        $this->command->table(['Variable', 'Value'], $this->arrayToTable($results));
     }
 
     /**

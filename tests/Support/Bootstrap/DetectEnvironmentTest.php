@@ -59,7 +59,7 @@ class DetectEnvironmentTest extends TestCase
         );
 
         $this->assertTrue(env('APP_DEBUG'));
-        $this->assertEquals('test', env('APP_ENV'));
-        $this->assertTrue($this->app->environment('test'));
+        $this->assertEquals('setup_test', env('APP_ENV'));
+        $this->assertTrue($this->app->environment('setup_test'));
     }
 }

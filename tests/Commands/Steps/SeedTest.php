@@ -56,10 +56,10 @@ class SeedTest extends TestCase
     {
         $class = config('setup.seed.class');
 
-        $artisan = \Mockery::mock($this->app['Illuminate\Contracts\Console\Kernel']);
-        $artisan->shouldReceive('call')->with('db:seed', ['--class' => $class, '--force' => true, '--no-interaction' => true])->andReturn(0)->once();
-
-        $this->app['Illuminate\Contracts\Console\Kernel'] = $artisan;
+        \Artisan::shouldReceive('call')->with(
+            'db:seed',
+            ['--class' => $class, '--force' => true, '--no-interaction' => true]
+        )->andReturn(0)->once();
 
         $step = new Seed($this->mockCommand());
         $this->assertTrue($step->finish($class));

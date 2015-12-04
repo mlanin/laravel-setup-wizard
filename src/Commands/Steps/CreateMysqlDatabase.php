@@ -1,11 +1,26 @@
 <?php namespace Lanin\Laravel\SetupWizard\Commands\Steps;
 
+use Illuminate\Console\Command;
+use Illuminate\Database\Connection;
 use Symfony\Component\Process\Process;
 
-class CreateDatabase extends AbstractStep
+class CreateMysqlDatabase extends AbstractStep
 {
-    const USE_ENV_USER   = 'env';
-    const USE_OTHER_USER = 'other';
+    /**
+     * @var Connection
+     */
+    protected $connection;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(Command $command)
+    {
+        parent::__construct($command);
+
+        $this->connection = \DB::connection();
+    }
+
 
     /**
      * Return command prompt text.
@@ -14,7 +29,7 @@ class CreateDatabase extends AbstractStep
      */
     public function prompt()
     {
-        return 'Do you want to create database?';
+        return 'Do you want to create MySQL database?';
     }
 
     /**
@@ -24,29 +39,13 @@ class CreateDatabase extends AbstractStep
      */
     public function prepare()
     {
-        $source = $this->command->choice(
-            'Do you want to use user from .env or provide another one?',
-            [self::USE_ENV_USER, self::USE_OTHER_USER],
-            0
-        );
+        $return = [];
 
-        $return = [
-            'commands' => [],
-            'source'   => $source,
-        ];
+        $this->getDatabaseConfigs($return);
 
-        $this->getEnvDatabase($return);
-
-        switch ($source)
+        if ($this->command->confirm('Do you want to provide an other user to connect to DB?', false))
         {
-            case self::USE_OTHER_USER:
-                $this->getOtherUser($return);
-                break;
-
-            case self::USE_ENV_USER:
-            default:
-                $this->getEnvUser($return);
-                break;
+            $this->getOtherConnectionUser($return);
         }
 
         $this->generateSqlCommands($return);
@@ -59,11 +58,16 @@ class CreateDatabase extends AbstractStep
      *
      * @param array $return
      */
-    protected function getEnvDatabase(array &$return)
+    protected function getDatabaseConfigs(array &$return)
     {
-        $return['host']      = env('DB_HOST');
-        $return['database']  = env('DB_DATABASE');
         $return['localhost'] = 'localhost';
+
+        $return['host']     = $this->connection->getConfig('host');
+        $return['database'] = $this->connection->getConfig('database');
+        $return['username'] = $this->connection->getConfig('username');
+        $return['password'] = $this->connection->getConfig('password');
+        $return['connection_username'] = $return['username'];
+        $return['connection_password'] = $return['password'];
 
         if ( ! in_array($return['host'], ['localhost', '127.0.0.1']))
         {
@@ -72,28 +76,17 @@ class CreateDatabase extends AbstractStep
     }
 
     /**
-     * Get user from environment.
-     *
-     * @param array $return
-     */
-    protected function getEnvUser(array &$return)
-    {
-        $return['username'] = env('DB_USERNAME');
-        $return['password'] = env('DB_PASSWORD');
-    }
-
-    /**
      * Ask info about 'root' user.
      *
      * @param array $return
      */
-    protected function getOtherUser(array &$return)
+    protected function getOtherConnectionUser(array &$return)
     {
-        $return['username'] = $this->command->ask(
+        $return['connection_username'] = $this->command->ask(
             'Provide user\'s login with <comment>CREATE DATABASE</comment> grants',
             'root'
         );
-        $return['password'] = $this->command->secret('Password');
+        $return['connection_password'] = $this->command->secret('Password');
     }
 
     /**
@@ -101,17 +94,16 @@ class CreateDatabase extends AbstractStep
      *
      * @param array $return
      */
-    private function generateSqlCommands(array &$return)
+    protected function generateSqlCommands(array &$return)
     {
-        $return['commands'] = [];
-
+        $return['commands']   = [];
         $return['commands'][] = "CREATE DATABASE IF NOT EXISTS {$return['database']};";
         $return['commands'][] = sprintf(
             "GRANT ALL PRIVILEGES ON %s.* TO %s@%s IDENTIFIED BY '%s';",
             $return['database'],
-            env('DB_USERNAME'),
+            $return['username'],
             $return['localhost'],
-            env('DB_PASSWORD')
+            $return['password']
         );
     }
 
@@ -122,12 +114,12 @@ class CreateDatabase extends AbstractStep
      * @param  bool $full
      * @return string
      */
-    protected function prepareCommand($results, $full = false)
+    protected function generateConsoleCommand($results, $full = false)
     {
         return sprintf(
             "mysql -u\"%s\" -p\"%s\" -h\"%s\" -e\"%s\"",
-            $results['username'],
-            $full ? $results['password'] : '******',
+            $results['connection_username'],
+            $full ? $results['connection_password'] : '******',
             $results['host'],
             join(' ', $results['commands'])
         );
@@ -142,7 +134,7 @@ class CreateDatabase extends AbstractStep
     public function preview($results)
     {
         $this->command->info(
-            "This command will be executed: <comment>" . $this->prepareCommand($results) . "</comment>"
+            "This command will be executed: <comment>" . $this->generateConsoleCommand($results) . "</comment>"
         );
     }
 
@@ -154,14 +146,12 @@ class CreateDatabase extends AbstractStep
      */
     public function finish($results)
     {
-        $process = new Process($this->prepareCommand($results, true));
+        $process = new Process($this->generateConsoleCommand($results, true));
 
-        $process->run(
-            function ($type, $output) use (&$result)
-            {
-                $this->command->line($output);
-            }
-        );
+        $process->run(function ($type, $output)
+        {
+            $this->command->line($output);
+        });
 
         return ! (bool) $process->getExitCode();
     }
