@@ -59,7 +59,7 @@ $ php artisan help app:setup
 All defaults are stored in `setup.php` config file. You can publish it in your app's `config` folder using artisan command:
 
 ```bash
-$ php artisan vendor:publish
+$ php artisan vendor:publish --tag=setup
 ```
 
 ## Extending
