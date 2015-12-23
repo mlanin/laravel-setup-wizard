@@ -45,7 +45,7 @@ class DotEnv extends AbstractStep
      * @param  string $file
      * @return string
      */
-    protected function envFilePath($file = '.env')
+    protected function envFilePath($file = '')
     {
         return base_path($file);
     }

@@ -38,12 +38,16 @@ class Setup extends Command
         parent::__construct();
 
         $this->steps = config('setup.steps');
+
+        $this->setHelp($this->generateHelp());
     }
 
     /**
-     * @inheritDoc
+     * Generate additional help.
+     *
+     * @return string
      */
-    public function getHelp()
+    public function generateHelp()
     {
         $help = $this->description . ' Available steps:' . PHP_EOL;
 
@@ -58,7 +62,7 @@ class Setup extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return bool
      */
     public function handle()
     {
@@ -111,7 +115,7 @@ class Setup extends Command
 
             if ($this->confirm($step->prompt(), true))
             {
-                return $step->run($pretend);
+                return $this->proceedStep($step, $pretend);
             }
         }
         catch (\Exception $e)
@@ -123,9 +127,36 @@ class Setup extends Command
     }
 
     /**
+     * Proceed step lifecycle.
+     *
+     * @param  AbstractStep $step
+     * @param  bool $pretend
+     * @return bool
+     */
+    protected function proceedStep(AbstractStep $step, $pretend)
+    {
+        try
+        {
+            $return = $step->run($pretend);
+        }
+        catch (\Exception $e)
+        {
+            $return = false;
+            $this->error($e->getMessage());
+        }
+
+        if ($return === false && $step->repeat())
+        {
+            $return = $this->proceedStep($step, $pretend);
+        }
+
+        return $return;
+    }
+
+    /**
      * Instantiate step class.
      *
-     * @param string $step
+     * @param  string $step
      * @return AbstractStep
      * @throws \Exception
      */
@@ -133,7 +164,7 @@ class Setup extends Command
     {
         if ( ! $this->stepExist($step))
         {
-            throw new \Exception("Step <comment>{$step}</comment> doesn't exist.");
+            throw new \Exception("Step {$step} doesn't exist.");
         }
 
         $class = $this->steps[$step];
@@ -141,7 +172,7 @@ class Setup extends Command
 
         if ( ! ($step instanceof AbstractStep))
         {
-            throw new \Exception("Step class <comment>{$class}</comment> should be an instance of AbstractStep.");
+            throw new \Exception("Step class {$class} should be an instance of AbstractStep.");
         }
 
         return $step;

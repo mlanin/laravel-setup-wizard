@@ -40,19 +40,10 @@ abstract class AbstractStep
 
         if ($this->command->confirm('Everything is right?'))
         {
-            $return = $pretend ? true : $this->finish($results);
-
-            if ($return === false)
-            {
-                $return = $this->repeat();
-            }
-        }
-        else
-        {
-            $return = $this->repeat();
+            return $pretend ?: $this->finish($results);
         }
 
-        return $return;
+        return false;
     }
 
     /**
@@ -62,19 +53,17 @@ abstract class AbstractStep
      */
     public function repeat()
     {
-        if ($this->repeats > self::REPEATS)
+        $repeatCountExceeded = $this->repeats > static::REPEATS;
+        $wantToRepeat = $this->command->confirm('Do you want to repeat step?');
+
+        if ($repeatCountExceeded || ! $wantToRepeat)
         {
             return false;
         }
 
-        if ($this->command->confirm('Do you want to repeat step?'))
-        {
-            $this->repeats++;
+        $this->repeats++;
 
-            return $this->run();
-        }
-
-        return false;
+        return true;
     }
 
     /**
